@@ -1,6 +1,7 @@
 package ru.job4j.todo.service;
 
 import lombok.AllArgsConstructor;
+import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.repository.TaskRepository;
@@ -10,6 +11,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@ThreadSafe
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
 
