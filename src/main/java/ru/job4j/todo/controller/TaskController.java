@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
 
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
@@ -22,7 +22,7 @@ public class TaskController {
     }
 
     @GetMapping("/todos")
-    public String getIndex(Model model, @RequestParam(name = "status", required = false) Boolean status) {
+    public String getTodos(Model model, @RequestParam(name = "status", required = false) Boolean status) {
         if (status != null) {
             model.addAttribute("tasks", taskService.findByStatus(status));
             return "todos";
@@ -56,10 +56,13 @@ public class TaskController {
 
     @GetMapping("/formUpdateTask/{id}")
     public String updateTask(@PathVariable int id, Model model) {
-        model.addAttribute("task", taskService.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Не найден объект для редактирования"))
-        );
-        return "updateTask";
+        Optional<Task> optTask = taskService.findById(id);
+        if (optTask.isPresent()) {
+            model.addAttribute("task", optTask.get());
+            return "updateTask";
+        }
+        model.addAttribute("error", "Не найдена задача для редактирования");
+        return "error";
     }
 
     @PostMapping("/deleteTask")
