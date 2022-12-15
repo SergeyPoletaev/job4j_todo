@@ -1,6 +1,7 @@
 # job4j_todo
 
 [![build](https://github.com/SergeyPoletaev/job4j_todo/workflows/build/badge.svg)](https://github.com/SergeyPoletaev/job4j_todo/actions)
+[![codecov](https://codecov.io/gh/SergeyPoletaev/job4j_todo/branch/master/graph/badge.svg?token=GOL74Y3GDA)](https://codecov.io/gh/SergeyPoletaev/job4j_todo)
 
 ### Описание проекта:
 
@@ -35,9 +36,9 @@
 ### Запуск проекта:
 
 1. Настроить подключение к серверу БД в соответствии с настройками из файла    
-   ./job4j_todo/src/main/resources/hibernate.cfg.xml   
+   [./job4j_todo/src/main/resources/hibernate.cfg.xml](https://github.com/SergeyPoletaev/job4j_todo/blob/master/src/main/resources/hibernate.cfg.xml)   
    В случае изменения настроек подключения к БД привести в соответствие также настройки в файле  
-   ./job4j_todo/db/liquibase.properties
+   [./job4j_todo/db/liquibase.properties](https://github.com/SergeyPoletaev/job4j_todo/blob/master/db/liquibase.properties)
 2. Создать базу данных, например через утилиту psql:
 
 ``` 

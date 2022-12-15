@@ -46,8 +46,10 @@ class HibernateTaskRepositoryTest {
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
-        Task newTask = taskRepository.create(task);
-        assertThat(newTask.getName()).isEqualTo("msg");
+        task = taskRepository.create(task);
+        Optional<Task> addTask = taskRepository.findById(task.getId());
+        assertThat(addTask.isPresent()).isTrue();
+        assertThat(addTask.get().getName()).isEqualTo("msg");
     }
 
     @Test
