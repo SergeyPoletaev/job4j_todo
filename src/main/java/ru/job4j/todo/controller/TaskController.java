@@ -1,10 +1,10 @@
 package ru.job4j.todo.controller;
 
 import lombok.AllArgsConstructor;
-import net.jcip.annotations.ThreadSafe;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
 
@@ -12,62 +12,63 @@ import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
-@ThreadSafe
+@RequestMapping("/tasks")
 public class TaskController {
     private final TaskService taskService;
-
-    @GetMapping("/")
-    public String getIndex() {
-        return "redirect:/todos";
-    }
 
     @GetMapping("/todos")
     public String getTodos(Model model, @RequestParam(name = "status", required = false) Boolean status) {
         if (status != null) {
             model.addAttribute("tasks", taskService.findByStatus(status));
-            return "todos";
+            return "/tasks/todos";
         }
         model.addAttribute("tasks", taskService.findAll());
-        return "todos";
+        return "/tasks/todos";
     }
 
-    @GetMapping("/formAddTask")
+    @GetMapping("/formAdd")
     public String addTask() {
-        return "addTask";
+        return "/tasks/add";
     }
 
-    @PostMapping("/createTask")
+    @PostMapping("/create")
     public String create(@ModelAttribute Task task) {
         taskService.create(task);
-        return "redirect:/todos";
+        return "redirect:/tasks/todos";
     }
 
-    @PostMapping("/selectTask")
+    @PostMapping("/select")
     public String getTaskPage(Model model, @ModelAttribute Task task) {
         model.addAttribute("task", task);
-        return "taskPage";
+        return "/tasks/todo";
     }
 
-    @PostMapping("/updateTask")
-    public String update(@ModelAttribute Task task) {
-        taskService.replace(task);
-        return "redirect:/todos";
+    @PostMapping("/update")
+    public String update(@ModelAttribute Task task, RedirectAttributes redirectAttr) {
+        if (taskService.replace(task)) {
+            return "redirect:/tasks/todos";
+        }
+        redirectAttr.addFlashAttribute("message", "Обновить задачу не получилось!");
+        return "redirect:/shared/fail";
     }
 
-    @GetMapping("/formUpdateTask/{id}")
+    @GetMapping("/formUpdate/{id}")
     public String updateTask(@PathVariable int id, Model model) {
         Optional<Task> optTask = taskService.findById(id);
         if (optTask.isPresent()) {
             model.addAttribute("task", optTask.get());
-            return "updateTask";
+            return "/tasks/formUpdate";
         }
-        model.addAttribute("error", "Не найдена задача для редактирования");
-        return "error";
+        model.addAttribute("message", "Не найдена задача для редактирования");
+        return "/shared/fail";
     }
 
-    @PostMapping("/deleteTask")
-    public String delete(@ModelAttribute Task task) {
-        taskService.delete(task.getId());
-        return "redirect:/todos";
+    @PostMapping("/delete")
+    public String delete(@ModelAttribute Task task, RedirectAttributes redirectAttr) {
+        if (taskService.delete(task.getId())) {
+            return "redirect:/tasks/todos";
+        }
+        redirectAttr.addFlashAttribute("message", "Удалить задачу не получилось!");
+        return "redirect:/shared/fail";
     }
 }

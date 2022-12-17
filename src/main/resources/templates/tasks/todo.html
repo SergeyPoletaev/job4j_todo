@@ -28,7 +28,7 @@
             <h5 class="card-title" th:text="${task.name}"></h5>
             <p class="card-text" th:text="${task.description}"></p>
             <div class="row">
-                <form th:action="@{/updateTask}" method="POST">
+                <form th:action="@{/tasks/update}" method="POST">
                     <div class="col">
                         <input type="hidden" name="id" th:field="${task.id}"/>
                         <input type="hidden" name="name" th:field="${task.name}"/>
@@ -37,14 +37,14 @@
                         <button class="btn btn-success" role="button">Выполнено</button>
                     </div>
                 </form>
-                <a class="btn btn-info" th:href="@{|/formUpdateTask/${task.id}|}" role="button">Редактировать</a>
-                <form th:action="@{/deleteTask}" method="POST">
+                <a class="btn btn-info" th:href="@{|/tasks/formUpdate/${task.id}|}" role="button">Редактировать</a>
+                <form th:action="@{/tasks/delete}" method="POST">
                     <div class="col">
                         <input type="hidden" name="id" th:field="${task.id}"/>
                         <button class="btn btn-danger" role="button">Удалить</button>
                     </div>
                 </form>
-                <a class="btn btn-secondary" th:href="@{|/todos|}" role="button">Назад к списку</a>
+                <a class="btn btn-secondary" th:href="@{|/tasks/todos|}" role="button">Назад к списку</a>
             </div>
         </div>
     </div>

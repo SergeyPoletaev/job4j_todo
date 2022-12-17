@@ -1,7 +1,6 @@
 package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
-import net.jcip.annotations.ThreadSafe;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-@ThreadSafe
 public class HibernateTaskRepository implements TaskRepository {
     private static final String FROM_TASKS = "from tasks";
     private static final String FROM_TASKS_WHERE_ID = "from tasks where id = :id";

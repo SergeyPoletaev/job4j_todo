@@ -32,7 +32,7 @@
         </thead>
         <tbody>
         <tr th:each="task:${tasks}">
-            <form th:action="@{/selectTask}" method="POST">
+            <form th:action="@{/tasks/select}" method="POST">
                 <td th:text="${task.id}"></td>
                 <td>
                     <button type="submit" class="btn btn-link">
@@ -53,10 +53,10 @@
         </tbody>
     </table>
     <div class="container">
-        <a class="btn btn-primary" th:href="@{/formAddTask}" role="button">Добавить задание</a>
-        <a class="btn btn-secondary" th:href="@{/todos}" role="button">Все</a>
-        <a class="btn btn-success" th:href="@{/todos?status=true}" role="button">Выполненные</a>
-        <a class="btn btn-warning" th:href="@{/todos?status=false}" role="button">Новые</a>
+        <a class="btn btn-primary" th:href="@{/tasks/formAdd}" role="button">Добавить задание</a>
+        <a class="btn btn-secondary" th:href="@{/tasks/todos}" role="button">Все</a>
+        <a class="btn btn-success" th:href="@{/tasks/todos?status=true}" role="button">Выполненные</a>
+        <a class="btn btn-warning" th:href="@{/tasks/todos?status=false}" role="button">Новые</a>
     </div>
 </div>
 </body>
