@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.util.HttpHelper;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Controller
@@ -17,7 +19,10 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping("/todos")
-    public String getTodos(Model model, @RequestParam(name = "status", required = false) Boolean status) {
+    public String getTodos(Model model,
+                           @RequestParam(name = "status", required = false) Boolean status,
+                           HttpSession httpSession) {
+        HttpHelper.addUserToModel(httpSession, model);
         if (status != null) {
             model.addAttribute("tasks", taskService.findByStatus(status));
             return "/tasks/todos";
@@ -27,7 +32,8 @@ public class TaskController {
     }
 
     @GetMapping("/formAdd")
-    public String addTask() {
+    public String addTask(HttpSession httpSession, Model model) {
+        HttpHelper.addUserToModel(httpSession, model);
         return "/tasks/add";
     }
 
@@ -38,7 +44,8 @@ public class TaskController {
     }
 
     @PostMapping("/select")
-    public String getTaskPage(Model model, @ModelAttribute Task task) {
+    public String getTaskPage(Model model, @ModelAttribute Task task, HttpSession httpSession) {
+        HttpHelper.addUserToModel(httpSession, model);
         model.addAttribute("task", task);
         return "/tasks/todo";
     }
@@ -53,7 +60,8 @@ public class TaskController {
     }
 
     @GetMapping("/formUpdate/{id}")
-    public String updateTask(@PathVariable int id, Model model) {
+    public String updateTask(@PathVariable int id, Model model, HttpSession httpSession) {
+        HttpHelper.addUserToModel(httpSession, model);
         Optional<Task> optTask = taskService.findById(id);
         if (optTask.isPresent()) {
             model.addAttribute("task", optTask.get());

@@ -1,11 +1,14 @@
 package ru.job4j.todo.controller;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.util.HttpHelper;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +24,12 @@ class TaskControllerTest {
         when(taskService.findAll()).thenReturn(tasks);
         TaskController controller = new TaskController(taskService);
         Model model = mock(Model.class);
-        String page = controller.getTodos(model, null);
+        String page;
+        try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
+            HttpSession httpSession = mock(HttpSession.class);
+            page = controller.getTodos(model, null, httpSession);
+            httpHelper.verify(() -> HttpHelper.addUserToModel(httpSession, model));
+        }
         verify(model).addAttribute("tasks", tasks);
         assertThat(page).isEqualTo("/tasks/todos");
     }
@@ -34,7 +42,12 @@ class TaskControllerTest {
         when(taskService.findByStatus(status)).thenReturn(tasks);
         TaskController controller = new TaskController(taskService);
         Model model = mock(Model.class);
-        String page = controller.getTodos(model, status);
+        String page;
+        try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
+            HttpSession httpSession = mock(HttpSession.class);
+            page = controller.getTodos(model, status, httpSession);
+            httpHelper.verify(() -> HttpHelper.addUserToModel(httpSession, model));
+        }
         verify(model).addAttribute("tasks", tasks);
         assertThat(page).isEqualTo("/tasks/todos");
     }
@@ -43,7 +56,13 @@ class TaskControllerTest {
     void addTask() {
         TaskService taskService = mock(TaskService.class);
         TaskController controller = new TaskController(taskService);
-        String page = controller.addTask();
+        Model model = mock(Model.class);
+        String page;
+        try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
+            HttpSession httpSession = mock(HttpSession.class);
+            page = controller.addTask(httpSession, model);
+            httpHelper.verify(() -> HttpHelper.addUserToModel(httpSession, model));
+        }
         assertThat(page).isEqualTo("/tasks/add");
     }
 
@@ -64,7 +83,12 @@ class TaskControllerTest {
         TaskService taskService = mock(TaskService.class);
         TaskController controller = new TaskController(taskService);
         Model model = mock(Model.class);
-        String page = controller.getTaskPage(model, task);
+        String page;
+        try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
+            HttpSession httpSession = mock(HttpSession.class);
+            page = controller.getTaskPage(model, task, httpSession);
+            httpHelper.verify(() -> HttpHelper.addUserToModel(httpSession, model));
+        }
         verify(model).addAttribute("task", task);
         assertThat(page).isEqualTo("/tasks/todo");
     }
@@ -101,7 +125,12 @@ class TaskControllerTest {
         when(taskService.findById(id)).thenReturn(Optional.of(task));
         Model model = mock(Model.class);
         TaskController controller = new TaskController(taskService);
-        String page = controller.updateTask(id, model);
+        String page;
+        try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
+            HttpSession httpSession = mock(HttpSession.class);
+            page = controller.updateTask(id, model, httpSession);
+            httpHelper.verify(() -> HttpHelper.addUserToModel(httpSession, model));
+        }
         verify(taskService).findById(id);
         verify(model).addAttribute("task", task);
         assertThat(page).isEqualTo("/tasks/formUpdate");
@@ -114,7 +143,12 @@ class TaskControllerTest {
         when(taskService.findById(id)).thenReturn(Optional.empty());
         Model model = mock(Model.class);
         TaskController controller = new TaskController(taskService);
-        String page = controller.updateTask(id, model);
+        String page;
+        try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
+            HttpSession httpSession = mock(HttpSession.class);
+            page = controller.updateTask(id, model, httpSession);
+            httpHelper.verify(() -> HttpHelper.addUserToModel(httpSession, model));
+        }
         verify(taskService).findById(id);
         verify(model).addAttribute("message", "Не найдена задача для редактирования");
         assertThat(page).isEqualTo("/shared/fail");

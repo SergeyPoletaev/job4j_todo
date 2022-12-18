@@ -1,7 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -19,7 +21,7 @@
     <title>Todos</title>
 </head>
 <body>
-<div class="container">
+<div class="container pt-3">
     <div class="card" style="width: 100%">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="#">You ToDos :-) </a>
@@ -27,32 +29,32 @@
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/user/logout}">
-                        <span th:text="${user.name}"></span>
-                        <span> | Выйти</span>
-                    </a>
-                </div>
-            </div>
         </nav>
-        <div class="card" style="width: 100%">
-            <div class="card-header">
-                <b>Новое задание</b>
+    </div>
+    <div class="card" style="width: 100%">
+        <div class="card-header">
+            Авторизация
+        </div>
+        <div class="card-body">
+            <div th:if="${fail}" class="alert alert-danger" role="alert">
+                Логин или пароль введены неверно!
             </div>
-            <div class="card-body">
-                <form th:action="@{/tasks/create}" method="POST">
-                    <input type="hidden" name="id" value="0"/>
-                    <div class="form-group">
-                        <label for="name">Добавьте название</label>
-                        <input type="text" class="form-control" name="name" id="name">
-                        <label for="description">Добавьте описание</label>
-                        <input type="text" class="form-control" name="description" id="description">
-                    </div>
-                    <button type="submit" class="btn btn-success">Сохранить</button>
-                    <a class="btn btn-danger" th:href="@{/tasks/todos}" role="button">Отменить</a>
-                </form>
-            </div>
+            <form th:action="@{/user/login}" method="POST">
+                <div class="form-group">
+                    <label>Логин &nbsp;&nbsp;</label>
+                    <label>
+                        <input type="text" class="form-control" name="login">
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <label>
+                        <input type="text" class="form-control" name="password">
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Войти</button>
+                <a class="btn btn-secondary" th:href="@{/user/add}" role="button">Зарегистрироваться</a>
+            </form>
         </div>
     </div>
 </div>

@@ -20,6 +20,23 @@
 </head>
 <body>
 <div class="container">
+    <div class="card" style="width: 100%">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">You ToDos :-) </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/user/logout}">
+                        <span th:text="${user.name}"></span>
+                        <span> | Выйти</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
     <div class="card">
         <div class="card-header">
             <b>Описание задачи</b>

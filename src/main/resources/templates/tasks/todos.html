@@ -20,43 +20,61 @@
 </head>
 <body>
 <div class="container">
-    <table class="table table-striped table-hover">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Задание</th>
-            <th scope="col">Создано</th>
-            <th scope="col">Изменено</th>
-            <th scope="col">Состояние</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="task:${tasks}">
-            <form th:action="@{/tasks/select}" method="POST">
-                <td th:text="${task.id}"></td>
-                <td>
-                    <button type="submit" class="btn btn-link">
-                        <input type="hidden" name="id" th:value="${task.id}"/>
-                        <span class=" " th:text="${task.name}"></span>
-                        <input type="hidden" name="name" th:value="${task.name}"/>
-                        <input type="hidden" name="description" th:value="${task.description}"/>
-                    </button>
-                </td>
-                <td th:text="${#temporals.format(task.created, 'dd-MM-EE-yyyy HH:mm:ss')}"></td>
-                <td th:text="${#temporals.format(task.modified, 'dd-MM-EE-yyyy HH:mm:ss')}"></td>
-                <td>
-                    <span th:if="${task.done}">Выполнено</span>
-                    <span th:unless="${task.done}">Новая</span>
-                </td>
-            </form>
-        </tr>
-        </tbody>
-    </table>
-    <div class="container">
-        <a class="btn btn-primary" th:href="@{/tasks/formAdd}" role="button">Добавить задание</a>
-        <a class="btn btn-secondary" th:href="@{/tasks/todos}" role="button">Все</a>
-        <a class="btn btn-success" th:href="@{/tasks/todos?status=true}" role="button">Выполненные</a>
-        <a class="btn btn-warning" th:href="@{/tasks/todos?status=false}" role="button">Новые</a>
+    <div class="card" style="width: 100%">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">You ToDos :-) </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{/user/logout}">
+                        <span th:text="${user.name}"></span>
+                        <span> | Выйти</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Задание</th>
+                <th scope="col">Создано</th>
+                <th scope="col">Изменено</th>
+                <th scope="col">Состояние</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="task:${tasks}">
+                <form th:action="@{/tasks/select}" method="POST">
+                    <td th:text="${task.id}"></td>
+                    <td>
+                        <button type="submit" class="btn btn-link">
+                            <input type="hidden" name="id" th:value="${task.id}"/>
+                            <span class=" " th:text="${task.name}"></span>
+                            <input type="hidden" name="name" th:value="${task.name}"/>
+                            <input type="hidden" name="description" th:value="${task.description}"/>
+                        </button>
+                    </td>
+                    <td th:text="${#temporals.format(task.created, 'dd-MM-EE-yyyy HH:mm:ss')}"></td>
+                    <td th:text="${#temporals.format(task.modified, 'dd-MM-EE-yyyy HH:mm:ss')}"></td>
+                    <td>
+                        <span th:if="${task.done}">Выполнено</span>
+                        <span th:unless="${task.done}">Новая</span>
+                    </td>
+                </form>
+            </tr>
+            </tbody>
+        </table>
+        <div class="container">
+            <a class="btn btn-primary" th:href="@{/tasks/formAdd}" role="button">Добавить задание</a>
+            <a class="btn btn-secondary" th:href="@{/tasks/todos}" role="button">Все</a>
+            <a class="btn btn-success" th:href="@{/tasks/todos?status=true}" role="button">Выполненные</a>
+            <a class="btn btn-warning" th:href="@{/tasks/todos?status=false}" role="button">Новые</a>
+        </div>
+        <p></p>
     </div>
 </div>
 </body>
