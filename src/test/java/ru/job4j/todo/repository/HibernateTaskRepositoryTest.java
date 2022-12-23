@@ -42,7 +42,7 @@ class HibernateTaskRepositoryTest {
 
     @Test
     void create() {
-        TaskRepository taskRepository = new HibernateTaskRepository(sf);
+        TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
@@ -54,7 +54,7 @@ class HibernateTaskRepositoryTest {
 
     @Test
     void replace() {
-        TaskRepository taskRepository = new HibernateTaskRepository(sf);
+        TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
@@ -72,7 +72,7 @@ class HibernateTaskRepositoryTest {
 
     @Test
     void delete() {
-        TaskRepository taskRepository = new HibernateTaskRepository(sf);
+        TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
@@ -83,7 +83,7 @@ class HibernateTaskRepositoryTest {
 
     @Test
     void findById() {
-        TaskRepository taskRepository = new HibernateTaskRepository(sf);
+        TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
@@ -93,7 +93,7 @@ class HibernateTaskRepositoryTest {
 
     @Test
     void findByStatus() {
-        TaskRepository taskRepository = new HibernateTaskRepository(sf);
+        TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
         Task trueTask = new Task();
         trueTask.setName("msg");
         trueTask.setDescription("desc");
@@ -108,7 +108,7 @@ class HibernateTaskRepositoryTest {
 
     @Test
     void findAll() {
-        TaskRepository taskRepository = new HibernateTaskRepository(sf);
+        TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
         Task trueTask = new Task();
         trueTask.setName("msg");
         trueTask.setDescription("desc");

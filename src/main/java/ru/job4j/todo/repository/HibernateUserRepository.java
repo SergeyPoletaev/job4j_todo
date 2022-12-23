@@ -1,12 +1,11 @@
 package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.User;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -18,84 +17,44 @@ public class HibernateUserRepository implements UserRepository {
     private static final String SELECT_ALL_USER = "from todo_user";
     private static final String FROM_USER_WHERE_LOGIN_AND_PASSWORD
             = "from todo_user where login = :login and password = :password";
-    private final SessionFactory sf;
+    private final CrudRepository crudRepository;
 
     @Override
     public User create(User user) {
-        Session session = sf.openSession();
-        try {
-            session.beginTransaction();
-            session.save(user);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        }
-        session.close();
+        crudRepository.run(session -> session.save(user));
         return user;
     }
 
     @Override
     public boolean replace(User user) {
-        boolean rsl = false;
-        Session session = sf.openSession();
-        try {
-            session.beginTransaction();
-            rsl = session.createQuery(UPDATE_USER)
-                    .setParameter("name", user.getName())
-                    .setParameter("password", user.getPassword())
-                    .setParameter("id", user.getId())
-                    .executeUpdate() > 0;
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        }
-        session.close();
-        return rsl;
+        return crudRepository.query(
+                UPDATE_USER,
+                Map.of("name", user.getName(),
+                        "password", user.getPassword(),
+                        "id", user.getId())
+        );
     }
 
     @Override
     public boolean delete(int id) {
-        boolean rsl = false;
-        Session session = sf.openSession();
-        try {
-            session.beginTransaction();
-            rsl = session.createQuery(DELETE_USER)
-                    .setParameter("id", id)
-                    .executeUpdate() > 0;
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-        }
-        session.close();
-        return rsl;
+        return crudRepository.query(DELETE_USER, Map.of("id", id));
     }
 
     @Override
     public Optional<User> findById(int id) {
-        Session session = sf.openSession();
-        Optional<User> rsl = session.createQuery(FROM_USER_WHERE_ID, User.class)
-                .setParameter("id", id)
-                .uniqueResultOptional();
-        session.close();
-        return rsl;
+        return crudRepository.optional(FROM_USER_WHERE_ID, User.class, Map.of("id", id));
     }
 
     @Override
     public List<User> findAll() {
-        Session session = sf.openSession();
-        List<User> rsl = session.createQuery(SELECT_ALL_USER, User.class).list();
-        session.close();
-        return rsl;
+        return crudRepository.query(SELECT_ALL_USER, User.class);
     }
 
     @Override
     public Optional<User> findByLoginAndPassword(String login, String password) {
-        Session session = sf.openSession();
-        Optional<User> rsl = session.createQuery(FROM_USER_WHERE_LOGIN_AND_PASSWORD, User.class)
-                .setParameter("login", login)
-                .setParameter("password", password)
-                .uniqueResultOptional();
-        session.close();
-        return rsl;
+        return crudRepository.optional(FROM_USER_WHERE_LOGIN_AND_PASSWORD,
+                User.class,
+                Map.of("login", login, "password", password)
+        );
     }
 }

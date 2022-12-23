@@ -46,7 +46,7 @@ class HibernateUserRepositoryTest {
         user.setName("anna");
         user.setLogin("login");
         user.setPassword("password");
-        UserRepository userRepository = new HibernateUserRepository(sf);
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         user = userRepository.create(user);
         Optional<User> addUser = userRepository.findById(user.getId());
         assertThat(addUser.isPresent()).isTrue();
@@ -59,7 +59,7 @@ class HibernateUserRepositoryTest {
         user.setName("anna");
         user.setLogin("login");
         user.setPassword("password");
-        UserRepository userRepository = new HibernateUserRepository(sf);
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         user = userRepository.create(user);
         User updUser = new User();
         updUser.setId(user.getId());
@@ -79,7 +79,7 @@ class HibernateUserRepositoryTest {
         user.setName("anna");
         user.setLogin("login");
         user.setPassword("password");
-        UserRepository userRepository = new HibernateUserRepository(sf);
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         user = userRepository.create(user);
         assertThat(userRepository.delete(user.getId())).isTrue();
         assertThat(userRepository.findById(user.getId())).isEqualTo(Optional.empty());
@@ -91,7 +91,7 @@ class HibernateUserRepositoryTest {
         user.setName("anna");
         user.setLogin("login");
         user.setPassword("password");
-        UserRepository userRepository = new HibernateUserRepository(sf);
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         user = userRepository.create(user);
         assertThat(userRepository.findById(user.getId())).isEqualTo(Optional.of(user));
     }
@@ -106,7 +106,7 @@ class HibernateUserRepositoryTest {
         user2.setName("sveta");
         user2.setLogin("login2");
         user2.setPassword("password");
-        UserRepository userRepository = new HibernateUserRepository(sf);
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         userRepository.create(user1);
         userRepository.create(user2);
         assertThat(userRepository.findAll()).isEqualTo(List.of(user1, user2));
@@ -118,7 +118,7 @@ class HibernateUserRepositoryTest {
         user.setName("anna");
         user.setLogin("login");
         user.setPassword("password");
-        UserRepository userRepository = new HibernateUserRepository(sf);
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         user = userRepository.create(user);
         assertThat(userRepository.findByLoginAndPassword(user.getLogin(), user.getPassword()))
                 .isEqualTo(Optional.of(user));
