@@ -72,7 +72,8 @@ class TaskControllerTest {
         TaskService taskService = mock(TaskService.class);
         when(taskService.create(task)).thenReturn(task);
         TaskController controller = new TaskController(taskService);
-        String page = controller.create(task);
+        HttpSession httpSession = mock(HttpSession.class);
+        String page = controller.create(task, httpSession);
         verify(taskService).create(task);
         assertThat(page).isEqualTo("redirect:/tasks/todos");
     }

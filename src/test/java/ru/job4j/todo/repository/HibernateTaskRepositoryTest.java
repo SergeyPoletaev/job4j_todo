@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.todo.config.TestHibernateConfig;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,7 @@ class HibernateTaskRepositoryTest {
         try {
             session.beginTransaction();
             session.createQuery("delete from tasks").executeUpdate();
+            session.createQuery("delete from todo_user").executeUpdate();
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -43,9 +45,13 @@ class HibernateTaskRepositoryTest {
     @Test
     void create() {
         TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
+        User user = new User(1, "a", "b", "c");
+        user = userRepository.create(user);
+        task.setUser(user);
         task = taskRepository.create(task);
         Optional<Task> addTask = taskRepository.findById(task.getId());
         assertThat(addTask.isPresent()).isTrue();
@@ -55,9 +61,13 @@ class HibernateTaskRepositoryTest {
     @Test
     void replace() {
         TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
+        User user = new User(1, "a", "b", "c");
+        user = userRepository.create(user);
+        task.setUser(user);
         task = taskRepository.create(task);
         Task updTask = new Task();
         updTask.setId(task.getId());
@@ -73,9 +83,13 @@ class HibernateTaskRepositoryTest {
     @Test
     void delete() {
         TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
+        User user = new User(1, "a", "b", "c");
+        user = userRepository.create(user);
+        task.setUser(user);
         task = taskRepository.create(task);
         assertThat(taskRepository.delete(task.getId())).isTrue();
         assertThat(taskRepository.findById(task.getId())).isEqualTo(Optional.empty());
@@ -84,9 +98,13 @@ class HibernateTaskRepositoryTest {
     @Test
     void findById() {
         TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
+        User user = new User(1, "a", "b", "c");
+        user = userRepository.create(user);
+        task.setUser(user);
         task = taskRepository.create(task);
         assertThat(taskRepository.findById(task.getId())).isEqualTo(Optional.of(task));
     }
@@ -94,14 +112,19 @@ class HibernateTaskRepositoryTest {
     @Test
     void findByStatus() {
         TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         Task trueTask = new Task();
         trueTask.setName("msg");
         trueTask.setDescription("desc");
+        User user = new User(1, "a", "b", "c");
+        user = userRepository.create(user);
+        trueTask.setUser(user);
         trueTask.setDone(true);
         trueTask = taskRepository.create(trueTask);
         Task falseTask = new Task();
         falseTask.setName("msg");
         falseTask.setDescription("desc");
+        falseTask.setUser(user);
         taskRepository.create(falseTask);
         assertThat(taskRepository.findByStatus(true)).isEqualTo(List.of(trueTask));
     }
@@ -109,14 +132,19 @@ class HibernateTaskRepositoryTest {
     @Test
     void findAll() {
         TaskRepository taskRepository = new HibernateTaskRepository(new CrudRepositoryImpl(sf));
+        UserRepository userRepository = new HibernateUserRepository(new CrudRepositoryImpl(sf));
         Task trueTask = new Task();
         trueTask.setName("msg");
         trueTask.setDescription("desc");
         trueTask.setDone(true);
+        User user = new User(1, "a", "b", "c");
+        user = userRepository.create(user);
+        trueTask.setUser(user);
         trueTask = taskRepository.create(trueTask);
         Task falseTask = new Task();
         falseTask.setName("msg");
         falseTask.setDescription("desc");
+        falseTask.setUser(user);
         falseTask = taskRepository.create(falseTask);
         assertThat(taskRepository.findAll()).isEqualTo(List.of(trueTask, falseTask));
     }

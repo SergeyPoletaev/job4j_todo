@@ -44,6 +44,7 @@
                 <th scope="col">Создано</th>
                 <th scope="col">Изменено</th>
                 <th scope="col">Состояние</th>
+                <th scope="col">Пользователь</th>
             </tr>
             </thead>
             <tbody>
@@ -64,6 +65,7 @@
                         <span th:if="${task.done}">Выполнено</span>
                         <span th:unless="${task.done}">Новая</span>
                     </td>
+                    <td th:text="${task.user.getName()}"></td>
                 </form>
             </tr>
             </tbody>
