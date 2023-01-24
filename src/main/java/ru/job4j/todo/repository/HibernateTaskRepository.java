@@ -17,7 +17,8 @@ public class HibernateTaskRepository implements TaskRepository {
     private static final String FROM_TASKS_WHERE_DONE = "from tasks where done = :status";
     private static final String DELETE_FROM_TASKS = "delete from tasks where id = :id";
     private static final String UPDATE_TASKS =
-            "update tasks set name = :name, description = :description, modified = :modified, done = :done where id = :id";
+            "update tasks set name = :name, description = :description, modified = :modified, "
+                    + "done = :done, priority = :priority where id = :id";
     private final CrudRepository crudRepository;
 
     @Override
@@ -35,6 +36,7 @@ public class HibernateTaskRepository implements TaskRepository {
                         "description", task.getDescription(),
                         "modified", LocalDateTime.now(),
                         "done", task.isDone(),
+                        "priority", task.getPriority(),
                         "id", task.getId()
                 ));
     }

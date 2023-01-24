@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.util.HttpHelper;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 @RequestMapping("/tasks")
 public class TaskController {
     private final TaskService taskService;
+    private final PriorityService priorityService;
 
     @GetMapping("/todos")
     public String getTodos(Model model,
@@ -35,6 +37,7 @@ public class TaskController {
     @GetMapping("/formAdd")
     public String addTask(HttpSession httpSession, Model model) {
         HttpHelper.addUserToModel(httpSession, model);
+        model.addAttribute("priorities", priorityService.findAll());
         return "/tasks/add";
     }
 
@@ -49,6 +52,7 @@ public class TaskController {
     @PostMapping("/select")
     public String getTaskPage(Model model, @ModelAttribute Task task, HttpSession httpSession) {
         HttpHelper.addUserToModel(httpSession, model);
+        task.setPriority(taskService.findById(task.getId()).orElseThrow().getPriority());
         model.addAttribute("task", task);
         return "/tasks/todo";
     }
@@ -68,6 +72,7 @@ public class TaskController {
         Optional<Task> optTask = taskService.findById(id);
         if (optTask.isPresent()) {
             model.addAttribute("task", optTask.get());
+            model.addAttribute("priorities", priorityService.findAll());
             return "/tasks/formUpdate";
         }
         model.addAttribute("message", "Не найдена задача для редактирования");

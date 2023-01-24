@@ -43,6 +43,7 @@
                 <th scope="col">Задание</th>
                 <th scope="col">Создано</th>
                 <th scope="col">Изменено</th>
+                <th scope="col">Приоритет</th>
                 <th scope="col">Состояние</th>
                 <th scope="col">Пользователь</th>
             </tr>
@@ -61,6 +62,7 @@
                     </td>
                     <td th:text="${#temporals.format(task.created, 'dd-MM-EE-yyyy HH:mm:ss')}"></td>
                     <td th:text="${#temporals.format(task.modified, 'dd-MM-EE-yyyy HH:mm:ss')}"></td>
+                    <td th:text="${task.priority.name}"></td>
                     <td>
                         <span th:if="${task.done}">Выполнено</span>
                         <span th:unless="${task.done}">Новая</span>

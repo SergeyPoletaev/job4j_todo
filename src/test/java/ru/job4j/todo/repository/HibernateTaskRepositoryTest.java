@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.job4j.todo.config.TestHibernateConfig;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 
@@ -52,6 +53,7 @@ class HibernateTaskRepositoryTest {
         User user = new User(1, "a", "b", "c");
         user = userRepository.create(user);
         task.setUser(user);
+        task.setPriority(new Priority(1, "a", 1));
         task = taskRepository.create(task);
         Optional<Task> addTask = taskRepository.findById(task.getId());
         assertThat(addTask.isPresent()).isTrue();
@@ -68,11 +70,13 @@ class HibernateTaskRepositoryTest {
         User user = new User(1, "a", "b", "c");
         user = userRepository.create(user);
         task.setUser(user);
+        task.setPriority(new Priority(1, "a", 1));
         task = taskRepository.create(task);
         Task updTask = new Task();
         updTask.setId(task.getId());
         updTask.setName("msg1");
         updTask.setDescription("desc");
+        updTask.setPriority(new Priority(2, "b", 2));
         assertThat(taskRepository.replace(updTask)).isTrue();
         assertThat(taskRepository.findById(task.getId())
                 .orElseThrow()
@@ -90,6 +94,7 @@ class HibernateTaskRepositoryTest {
         User user = new User(1, "a", "b", "c");
         user = userRepository.create(user);
         task.setUser(user);
+        task.setPriority(new Priority(1, "a", 1));
         task = taskRepository.create(task);
         assertThat(taskRepository.delete(task.getId())).isTrue();
         assertThat(taskRepository.findById(task.getId())).isEqualTo(Optional.empty());
@@ -105,6 +110,7 @@ class HibernateTaskRepositoryTest {
         User user = new User(1, "a", "b", "c");
         user = userRepository.create(user);
         task.setUser(user);
+        task.setPriority(new Priority(1, "a", 1));
         task = taskRepository.create(task);
         assertThat(taskRepository.findById(task.getId())).isEqualTo(Optional.of(task));
     }
@@ -116,6 +122,7 @@ class HibernateTaskRepositoryTest {
         Task trueTask = new Task();
         trueTask.setName("msg");
         trueTask.setDescription("desc");
+        trueTask.setPriority(new Priority(1, "a", 1));
         User user = new User(1, "a", "b", "c");
         user = userRepository.create(user);
         trueTask.setUser(user);
@@ -125,6 +132,7 @@ class HibernateTaskRepositoryTest {
         falseTask.setName("msg");
         falseTask.setDescription("desc");
         falseTask.setUser(user);
+        falseTask.setPriority(new Priority(1, "a", 1));
         taskRepository.create(falseTask);
         assertThat(taskRepository.findByStatus(true)).isEqualTo(List.of(trueTask));
     }
@@ -137,6 +145,7 @@ class HibernateTaskRepositoryTest {
         trueTask.setName("msg");
         trueTask.setDescription("desc");
         trueTask.setDone(true);
+        trueTask.setPriority(new Priority(1, "a", 1));
         User user = new User(1, "a", "b", "c");
         user = userRepository.create(user);
         trueTask.setUser(user);
@@ -145,6 +154,7 @@ class HibernateTaskRepositoryTest {
         falseTask.setName("msg");
         falseTask.setDescription("desc");
         falseTask.setUser(user);
+        falseTask.setPriority(new Priority(1, "a", 1));
         falseTask = taskRepository.create(falseTask);
         assertThat(taskRepository.findAll()).isEqualTo(List.of(trueTask, falseTask));
     }
