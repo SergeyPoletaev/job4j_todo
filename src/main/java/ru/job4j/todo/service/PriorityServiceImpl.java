@@ -6,6 +6,7 @@ import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.repository.PriorityRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -20,5 +21,10 @@ public class PriorityServiceImpl implements PriorityService {
     @Override
     public List<Priority> findAll() {
         return priorityRepository.findAll();
+    }
+
+    @Override
+    public Optional<Priority> findById(int id) {
+        return priorityRepository.findById(id);
     }
 }

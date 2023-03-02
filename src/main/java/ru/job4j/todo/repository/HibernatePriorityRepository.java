@@ -5,11 +5,14 @@ import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Priority;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
 public class HibernatePriorityRepository implements PriorityRepository {
     private static final String FROM_PRIORITY = "from priorities";
+    private static final String FROM_PRIORITY_WHERE_ID = "from priorities where id = :id";
     private final CrudRepository crudRepository;
 
     @Override
@@ -21,5 +24,10 @@ public class HibernatePriorityRepository implements PriorityRepository {
     @Override
     public List<Priority> findAll() {
         return crudRepository.query(FROM_PRIORITY, Priority.class);
+    }
+
+    @Override
+    public Optional<Priority> findById(int id) {
+        return crudRepository.optional(FROM_PRIORITY_WHERE_ID, Priority.class, Map.of("id", id));
     }
 }

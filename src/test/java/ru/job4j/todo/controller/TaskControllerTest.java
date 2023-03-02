@@ -71,16 +71,36 @@ class TaskControllerTest {
     }
 
     @Test
-    void create() {
+    void whenCreateSuccess() {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
         when(taskService.create(task)).thenReturn(task);
+        when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
         PriorityService priorityService = mock(PriorityService.class);
         TaskController controller = new TaskController(taskService, priorityService);
         HttpSession httpSession = mock(HttpSession.class);
-        String page = controller.create(task, httpSession);
+        RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
+        String page = controller.create(task, httpSession, redirectAttr);
         verify(taskService).create(task);
+        verify(taskService).findById(task.getId());
         assertThat(page).isEqualTo("redirect:/tasks/todos");
+    }
+
+    @Test
+    void whenCreateFail() {
+        Task task = new Task();
+        TaskService taskService = mock(TaskService.class);
+        when(taskService.create(task)).thenReturn(task);
+        when(taskService.findById(task.getId())).thenReturn(Optional.empty());
+        PriorityService priorityService = mock(PriorityService.class);
+        TaskController controller = new TaskController(taskService, priorityService);
+        HttpSession httpSession = mock(HttpSession.class);
+        RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
+        String page = controller.create(task, httpSession, redirectAttr);
+        verify(taskService).create(task);
+        verify(taskService).findById(task.getId());
+        verify(redirectAttr).addFlashAttribute("message", "Создать задачу не получилось!");
+        assertThat(page).isEqualTo("redirect:/shared/fail");
     }
 
     @Test
@@ -106,6 +126,7 @@ class TaskControllerTest {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
         when(taskService.replace(task)).thenReturn(true);
+        when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
         PriorityService priorityService = mock(PriorityService.class);
         TaskController controller = new TaskController(taskService, priorityService);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
@@ -118,6 +139,7 @@ class TaskControllerTest {
     void whenUpdateFail() {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
+        when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
         PriorityService priorityService = mock(PriorityService.class);
         TaskController controller = new TaskController(taskService, priorityService);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);

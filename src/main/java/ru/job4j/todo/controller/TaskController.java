@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.PriorityService;
@@ -42,11 +43,15 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, HttpSession httpSession) {
+    public String create(@ModelAttribute Task task, HttpSession httpSession, RedirectAttributes redirectAttr) {
         User user = (User) httpSession.getAttribute("user");
         task.setUser(user);
         taskService.create(task);
-        return "redirect:/tasks/todos";
+        if (taskService.findById(task.getId()).isPresent()) {
+            return "redirect:/tasks/todos";
+        }
+        redirectAttr.addFlashAttribute("message", "Создать задачу не получилось!");
+        return "redirect:/shared/fail";
     }
 
     @PostMapping("/select")
@@ -59,6 +64,17 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, RedirectAttributes redirectAttr) {
+        if (task.getPriority() == null) {
+            task.setPriority(taskService.findById(task.getId()).orElseThrow().getPriority());
+        } else {
+            int priorityId = task.getPriority().getId();
+            Optional<Priority> optPriority = priorityService.findById(priorityId);
+            if (optPriority.isEmpty()) {
+                redirectAttr.addFlashAttribute("message", "Выбранный приоритет не найден списке доступных приоритетов");
+                return "redirect:/shared/fail";
+            }
+            task.setPriority(optPriority.get());
+        }
         if (taskService.replace(task)) {
             return "redirect:/tasks/todos";
         }
