@@ -12,6 +12,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
+    private final PriorityService priorityService;
 
     @Override
     public Task create(Task task) {
@@ -20,6 +21,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public boolean replace(Task task) {
+        if (task.getPriority() == null) {
+            task.setPriority(findById(task.getId()).orElseThrow().getPriority());
+        } else {
+            int priorityId = task.getPriority().getId();
+            task.setPriority(priorityService.findById(priorityId).orElseThrow());
+        }
         return taskRepository.replace(task);
     }
 
