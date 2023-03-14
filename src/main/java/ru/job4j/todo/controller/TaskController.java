@@ -5,13 +5,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.util.HttpHelper;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -21,6 +25,7 @@ import java.util.Optional;
 public class TaskController {
     private final TaskService taskService;
     private final PriorityService priorityService;
+    private final CategoryService categoryService;
 
     @GetMapping("/todos")
     public String getTodos(Model model,
@@ -39,13 +44,22 @@ public class TaskController {
     public String addTask(HttpSession httpSession, Model model) {
         HttpHelper.addUserToModel(httpSession, model);
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "/tasks/add";
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, HttpSession httpSession, RedirectAttributes redirectAttr) {
+    public String create(@ModelAttribute Task task, HttpSession httpSession, RedirectAttributes redirectAttr, HttpServletRequest request) {
         User user = (User) httpSession.getAttribute("user");
         task.setUser(user);
+        String[] params = request.getParameterValues("selected_categories");
+        ArrayList<Category> categories = new ArrayList<>();
+        for (String str : params) {
+            Category category = new Category();
+            category.setId(Integer.parseInt(str));
+            categories.add(category);
+        }
+        task.setCategories(categories);
         taskService.create(task);
         if (taskService.findById(task.getId()).isPresent()) {
             return "redirect:/tasks/todos";
@@ -57,13 +71,19 @@ public class TaskController {
     @PostMapping("/select")
     public String getTaskPage(Model model, @ModelAttribute Task task, HttpSession httpSession) {
         HttpHelper.addUserToModel(httpSession, model);
-        task.setPriority(taskService.findById(task.getId()).orElseThrow().getPriority());
+        Task taskDb = taskService.findById(task.getId()).orElseThrow();
+        task.setPriority(taskDb.getPriority());
         model.addAttribute("task", task);
+        model.addAttribute("categories", taskDb.getCategories()
+                .stream()
+                .map(Category::getName)
+                .toList()
+        );
         return "/tasks/todo";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, RedirectAttributes redirectAttr) {
+    public String update(@ModelAttribute Task task, RedirectAttributes redirectAttr, HttpServletRequest request) {
         redirectAttr.addFlashAttribute("message", "Обновить задачу не получилось!");
         String pageSuccess = "redirect:/tasks/todos";
         String pageFail = "redirect:/shared/fail";
@@ -83,6 +103,7 @@ public class TaskController {
         if (optTask.isPresent()) {
             model.addAttribute("task", optTask.get());
             model.addAttribute("priorities", priorityService.findAll());
+            model.addAttribute("categories", categoryService.findAll());
             return "/tasks/formUpdate";
         }
         model.addAttribute("message", "Не найдена задача для редактирования");

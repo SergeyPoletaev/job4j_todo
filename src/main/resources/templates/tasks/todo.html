@@ -46,6 +46,8 @@
             <p class="card-text" th:text="${task.description}"></p>
             <b>Приоритет задачи:</b>
             <p class="card-text" th:text="${task.priority.name}"></p>
+            <b>Категории задачи:</b>
+            <p class="card-text" th:text="${#strings.listJoin(categories, ', ')}"></p>
             <div class="row">
                 <form th:action="@{/tasks/update}" method="POST">
                     <div class="col">

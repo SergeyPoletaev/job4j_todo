@@ -5,10 +5,12 @@ import org.mockito.MockedStatic;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.util.HttpHelper;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
@@ -23,8 +25,9 @@ class TaskControllerTest {
         List<Task> tasks = List.of(new Task(), new Task());
         TaskService taskService = mock(TaskService.class);
         PriorityService priorityService = mock(PriorityService.class);
+        CategoryService categoryService = mock(CategoryService.class);
         when(taskService.findAll()).thenReturn(tasks);
-        TaskController controller = new TaskController(taskService, priorityService);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         Model model = mock(Model.class);
         String page;
         try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
@@ -40,10 +43,11 @@ class TaskControllerTest {
     void whenGetTodosWithParam() {
         List<Task> tasks = List.of(new Task(), new Task());
         TaskService taskService = mock(TaskService.class);
+        CategoryService categoryService = mock(CategoryService.class);
         boolean status = false;
         when(taskService.findByStatus(status)).thenReturn(tasks);
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         Model model = mock(Model.class);
         String page;
         try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
@@ -59,7 +63,8 @@ class TaskControllerTest {
     void addTask() {
         TaskService taskService = mock(TaskService.class);
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         Model model = mock(Model.class);
         String page;
         try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
@@ -74,13 +79,16 @@ class TaskControllerTest {
     void whenCreateSuccess() {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
+        CategoryService categoryService = mock(CategoryService.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         when(taskService.create(task)).thenReturn(task);
         when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         HttpSession httpSession = mock(HttpSession.class);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
-        String page = controller.create(task, httpSession, redirectAttr);
+        when(request.getParameterValues("selected_categories")).thenReturn(new String[]{"1"});
+        String page = controller.create(task, httpSession, redirectAttr, request);
         verify(taskService).create(task);
         verify(taskService).findById(task.getId());
         assertThat(page).isEqualTo("redirect:/tasks/todos");
@@ -90,13 +98,16 @@ class TaskControllerTest {
     void whenCreateFail() {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
+        CategoryService categoryService = mock(CategoryService.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         when(taskService.create(task)).thenReturn(task);
         when(taskService.findById(task.getId())).thenReturn(Optional.empty());
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         HttpSession httpSession = mock(HttpSession.class);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
-        String page = controller.create(task, httpSession, redirectAttr);
+        when(request.getParameterValues("selected_categories")).thenReturn(new String[]{"1"});
+        String page = controller.create(task, httpSession, redirectAttr, request);
         verify(taskService).create(task);
         verify(taskService).findById(task.getId());
         verify(redirectAttr).addFlashAttribute("message", "Создать задачу не получилось!");
@@ -109,7 +120,8 @@ class TaskControllerTest {
         TaskService taskService = mock(TaskService.class);
         when(taskService.findById(task.getId())).thenReturn(Optional.of(new Task()));
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         Model model = mock(Model.class);
         String page;
         try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
@@ -125,12 +137,14 @@ class TaskControllerTest {
     void whenUpdateSuccess() {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         when(taskService.replace(task)).thenReturn(true);
         when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
-        String page = controller.update(task, redirectAttr);
+        String page = controller.update(task, redirectAttr, request);
         verify(taskService).replace(task);
         assertThat(page).isEqualTo("redirect:/tasks/todos");
     }
@@ -141,9 +155,11 @@ class TaskControllerTest {
         TaskService taskService = mock(TaskService.class);
         when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
-        String page = controller.update(task, redirectAttr);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        String page = controller.update(task, redirectAttr, request);
         verify(taskService).replace(task);
         verify(redirectAttr).addFlashAttribute("message", "Обновить задачу не получилось!");
         assertThat(page).isEqualTo("redirect:/shared/fail");
@@ -157,7 +173,8 @@ class TaskControllerTest {
         when(taskService.findById(id)).thenReturn(Optional.of(task));
         Model model = mock(Model.class);
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         String page;
         try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
             HttpSession httpSession = mock(HttpSession.class);
@@ -176,7 +193,8 @@ class TaskControllerTest {
         when(taskService.findById(id)).thenReturn(Optional.empty());
         Model model = mock(Model.class);
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         String page;
         try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
             HttpSession httpSession = mock(HttpSession.class);
@@ -194,7 +212,8 @@ class TaskControllerTest {
         TaskService taskService = mock(TaskService.class);
         when(taskService.delete(task.getId())).thenReturn(true);
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
         String page = controller.delete(task, redirectAttr);
         verify(taskService).delete(task.getId());
@@ -206,7 +225,8 @@ class TaskControllerTest {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
         PriorityService priorityService = mock(PriorityService.class);
-        TaskController controller = new TaskController(taskService, priorityService);
+        CategoryService categoryService = mock(CategoryService.class);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
         String page = controller.delete(task, redirectAttr);
         verify(taskService).delete(task.getId());

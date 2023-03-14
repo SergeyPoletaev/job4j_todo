@@ -55,6 +55,14 @@
                                     th:text="${priority.name}">
                             </option>
                         </select>
+                        <label for="selected_categories">Выберите одну или несколько категорий</label>
+                        <select class="form-control" id="selected_categories" name="selected_categories"
+                                multiple="multiple">
+                            <option th:each="category : ${categories}"
+                                    th:value="${category.id}"
+                                    th:text="${category.name}">
+                            </option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-success">Сохранить</button>
                     <a class="btn btn-danger" th:href="@{/tasks/todos}" role="button">Отменить</a>
