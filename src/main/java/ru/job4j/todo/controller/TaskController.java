@@ -13,9 +13,9 @@ import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.util.HttpHelper;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -49,14 +49,14 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, HttpSession httpSession, RedirectAttributes redirectAttr, HttpServletRequest request) {
+    public String create(@ModelAttribute Task task, HttpSession httpSession, RedirectAttributes redirectAttr,
+                         @RequestParam(value = "selected_categories") List<Integer> categoryIds) {
         User user = (User) httpSession.getAttribute("user");
         task.setUser(user);
-        String[] params = request.getParameterValues("selected_categories");
         ArrayList<Category> categories = new ArrayList<>();
-        for (String str : params) {
+        for (Integer id : categoryIds) {
             Category category = new Category();
-            category.setId(Integer.parseInt(str));
+            category.setId(id);
             categories.add(category);
         }
         task.setCategories(categories);
@@ -83,7 +83,7 @@ public class TaskController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, RedirectAttributes redirectAttr, HttpServletRequest request) {
+    public String update(@ModelAttribute Task task, RedirectAttributes redirectAttr) {
         redirectAttr.addFlashAttribute("message", "Обновить задачу не получилось!");
         String pageSuccess = "redirect:/tasks/todos";
         String pageFail = "redirect:/shared/fail";

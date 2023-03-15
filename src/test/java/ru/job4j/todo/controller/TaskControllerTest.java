@@ -10,8 +10,8 @@ import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 import ru.job4j.todo.util.HttpHelper;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,15 +80,14 @@ class TaskControllerTest {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
         CategoryService categoryService = mock(CategoryService.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
         when(taskService.create(task)).thenReturn(task);
         when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
         PriorityService priorityService = mock(PriorityService.class);
         TaskController controller = new TaskController(taskService, priorityService, categoryService);
         HttpSession httpSession = mock(HttpSession.class);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
-        when(request.getParameterValues("selected_categories")).thenReturn(new String[]{"1"});
-        String page = controller.create(task, httpSession, redirectAttr, request);
+        List<Integer> categoryIds = new ArrayList<>();
+        String page = controller.create(task, httpSession, redirectAttr, categoryIds);
         verify(taskService).create(task);
         verify(taskService).findById(task.getId());
         assertThat(page).isEqualTo("redirect:/tasks/todos");
@@ -99,15 +98,14 @@ class TaskControllerTest {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
         CategoryService categoryService = mock(CategoryService.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
         when(taskService.create(task)).thenReturn(task);
         when(taskService.findById(task.getId())).thenReturn(Optional.empty());
         PriorityService priorityService = mock(PriorityService.class);
         TaskController controller = new TaskController(taskService, priorityService, categoryService);
         HttpSession httpSession = mock(HttpSession.class);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
-        when(request.getParameterValues("selected_categories")).thenReturn(new String[]{"1"});
-        String page = controller.create(task, httpSession, redirectAttr, request);
+        List<Integer> categoryIds = new ArrayList<>();
+        String page = controller.create(task, httpSession, redirectAttr, categoryIds);
         verify(taskService).create(task);
         verify(taskService).findById(task.getId());
         verify(redirectAttr).addFlashAttribute("message", "Создать задачу не получилось!");
@@ -137,14 +135,13 @@ class TaskControllerTest {
     void whenUpdateSuccess() {
         Task task = new Task();
         TaskService taskService = mock(TaskService.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
         when(taskService.replace(task)).thenReturn(true);
         when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
         PriorityService priorityService = mock(PriorityService.class);
         CategoryService categoryService = mock(CategoryService.class);
         TaskController controller = new TaskController(taskService, priorityService, categoryService);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
-        String page = controller.update(task, redirectAttr, request);
+        String page = controller.update(task, redirectAttr);
         verify(taskService).replace(task);
         assertThat(page).isEqualTo("redirect:/tasks/todos");
     }
@@ -158,8 +155,7 @@ class TaskControllerTest {
         CategoryService categoryService = mock(CategoryService.class);
         TaskController controller = new TaskController(taskService, priorityService, categoryService);
         RedirectAttributes redirectAttr = mock(RedirectAttributes.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        String page = controller.update(task, redirectAttr, request);
+        String page = controller.update(task, redirectAttr);
         verify(taskService).replace(task);
         verify(redirectAttr).addFlashAttribute("message", "Обновить задачу не получилось!");
         assertThat(page).isEqualTo("redirect:/shared/fail");
