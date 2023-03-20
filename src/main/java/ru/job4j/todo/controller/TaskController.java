@@ -33,10 +33,10 @@ public class TaskController {
                            HttpSession httpSession) {
         HttpHelper.addUserToModel(httpSession, model);
         if (status != null) {
-            model.addAttribute("tasks", taskService.findByStatus(status));
+            model.addAttribute("tasks", taskService.findByStatus(status, model));
             return "/tasks/todos";
         }
-        model.addAttribute("tasks", taskService.findAll());
+        model.addAttribute("tasks", taskService.findAll(model));
         return "/tasks/todos";
     }
 

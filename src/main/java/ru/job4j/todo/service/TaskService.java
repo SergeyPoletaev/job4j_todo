@@ -1,5 +1,6 @@
 package ru.job4j.todo.service;
 
+import org.springframework.ui.Model;
 import ru.job4j.todo.model.Task;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface TaskService {
 
     Optional<Task> findById(int id);
 
-    List<Task> findByStatus(boolean status);
+    List<Task> findByStatus(boolean status, Model model);
 
-    List<Task> findAll();
+    List<Task> findAll(Model model);
 }

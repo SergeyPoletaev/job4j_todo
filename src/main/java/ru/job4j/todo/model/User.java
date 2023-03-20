@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
@@ -24,6 +21,8 @@ public class User {
     private String name;
     private String login;
     private String password;
+    @Column(name = "user_zone")
+    private String timezone;
 
     @Override
     public boolean equals(Object o) {

@@ -50,7 +50,7 @@ class HibernateTaskRepositoryTest {
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
-        User user = new User(1, "a", "b", "c");
+        User user = new User(1, "a", "b", "c", "UTC");
         user = userRepository.create(user);
         task.setUser(user);
         task.setPriority(new Priority(1, "a", 1));
@@ -67,7 +67,7 @@ class HibernateTaskRepositoryTest {
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
-        User user = new User(1, "a", "b", "c");
+        User user = new User(1, "a", "b", "c", "UTC");
         user = userRepository.create(user);
         task.setUser(user);
         task.setPriority(new Priority(1, "a", 1));
@@ -91,7 +91,7 @@ class HibernateTaskRepositoryTest {
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
-        User user = new User(1, "a", "b", "c");
+        User user = new User(1, "a", "b", "c", "UTC");
         user = userRepository.create(user);
         task.setUser(user);
         task.setPriority(new Priority(1, "a", 1));
@@ -107,7 +107,7 @@ class HibernateTaskRepositoryTest {
         Task task = new Task();
         task.setName("msg");
         task.setDescription("desc");
-        User user = new User(1, "a", "b", "c");
+        User user = new User(1, "a", "b", "c", "UTC");
         user = userRepository.create(user);
         task.setUser(user);
         task.setPriority(new Priority(1, "a", 1));
@@ -123,7 +123,7 @@ class HibernateTaskRepositoryTest {
         trueTask.setName("msg");
         trueTask.setDescription("desc");
         trueTask.setPriority(new Priority(1, "a", 1));
-        User user = new User(1, "a", "b", "c");
+        User user = new User(1, "a", "b", "c", "UTC");
         user = userRepository.create(user);
         trueTask.setUser(user);
         trueTask.setDone(true);
@@ -146,7 +146,7 @@ class HibernateTaskRepositoryTest {
         trueTask.setDescription("desc");
         trueTask.setDone(true);
         trueTask.setPriority(new Priority(1, "a", 1));
-        User user = new User(1, "a", "b", "c");
+        User user = new User(1, "a", "b", "c", "UTC");
         user = userRepository.create(user);
         trueTask.setUser(user);
         trueTask = taskRepository.create(trueTask);

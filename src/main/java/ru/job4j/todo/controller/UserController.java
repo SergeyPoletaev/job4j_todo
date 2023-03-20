@@ -9,7 +9,10 @@ import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.UserService;
 
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 @Controller
 @AllArgsConstructor
@@ -34,17 +37,26 @@ public class UserController {
     }
 
     @GetMapping("/add")
-    public String getRegistrationPage() {
+    public String getRegistrationPage(Model model) {
+        List<TimeZone> zones = Arrays.stream(TimeZone.getAvailableIDs())
+                .map(TimeZone::getTimeZone)
+                .toList();
+        model.addAttribute("zones", zones);
         return "/user/add";
     }
 
     @PostMapping("/registration")
     public String registration(@ModelAttribute User user, RedirectAttributes redirectAttr) {
-        if (userService.create(user).getId() != 0) {
-            return "redirect:/user/login";
-        }
         redirectAttr.addFlashAttribute("message", "Пользователь c таким логином уже существует");
-        return "redirect:/user/add";
+        String failRslPage = "redirect:/user/add";
+        try {
+            if (userService.create(user).getId() != 0) {
+                return "redirect:/user/login";
+            }
+        } catch (Exception e) {
+            return failRslPage;
+        }
+        return failRslPage;
     }
 
     @GetMapping("/logout")

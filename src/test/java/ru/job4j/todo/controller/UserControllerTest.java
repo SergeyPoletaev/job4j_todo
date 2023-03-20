@@ -53,7 +53,8 @@ class UserControllerTest {
     void getRegistrationPage() {
         UserService userService = mock(UserService.class);
         UserController userController = new UserController(userService);
-        assertThat(userController.getRegistrationPage()).isEqualTo("/user/add");
+        Model model = mock(Model.class);
+        assertThat(userController.getRegistrationPage(model)).isEqualTo("/user/add");
     }
 
     @Test

@@ -26,9 +26,9 @@ class TaskControllerTest {
         TaskService taskService = mock(TaskService.class);
         PriorityService priorityService = mock(PriorityService.class);
         CategoryService categoryService = mock(CategoryService.class);
-        when(taskService.findAll()).thenReturn(tasks);
-        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         Model model = mock(Model.class);
+        when(taskService.findAll(model)).thenReturn(tasks);
+        TaskController controller = new TaskController(taskService, priorityService, categoryService);
         String page;
         try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
             HttpSession httpSession = mock(HttpSession.class);
@@ -45,10 +45,10 @@ class TaskControllerTest {
         TaskService taskService = mock(TaskService.class);
         CategoryService categoryService = mock(CategoryService.class);
         boolean status = false;
-        when(taskService.findByStatus(status)).thenReturn(tasks);
+        Model model = mock(Model.class);
+        when(taskService.findByStatus(status, model)).thenReturn(tasks);
         PriorityService priorityService = mock(PriorityService.class);
         TaskController controller = new TaskController(taskService, priorityService, categoryService);
-        Model model = mock(Model.class);
         String page;
         try (MockedStatic<HttpHelper> httpHelper = mockStatic(HttpHelper.class)) {
             HttpSession httpSession = mock(HttpSession.class);
